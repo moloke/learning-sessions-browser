@@ -2,6 +2,8 @@
 
 A React-based web application for browsing and managing AI learning sessions. Built as part of a take-home assessment.
 
+Site is also live at: https://moloke.github.io/learning-sessions-browser/
+
 ## Features
 
 - **Search**: Filter sessions by title with 300ms debounce
