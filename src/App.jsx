@@ -86,11 +86,22 @@ const toggleComplete = (id) => {
                   key={session.id}
                   className="bg-white rounded-lg shadow-sm p-6"
                 >
-                  <div className="mb-3">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {session.title}
-                    </h3>
-                  </div>
+                  <div className="flex justify-between items-start mb-3">
+  <h3 className="text-xl font-semibold text-gray-900">
+    {session.title}
+  </h3>
+  <button
+    onClick={() => toggleComplete(session.id)}
+    aria-pressed={session.completed}
+    className={`px-3 py-1 rounded-md text-sm font-medium focus:ring-2 focus:ring-offset-2 transition-colors ${
+      session.completed
+        ? 'bg-green-100 text-green-800 hover:bg-green-200 focus:ring-green-500'
+        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500'
+    }`}
+  >
+    {session.completed ? '✓ Completed' : 'Mark Complete'}
+  </button>
+</div>
 
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                     {/* Tags */}
