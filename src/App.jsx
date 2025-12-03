@@ -10,6 +10,7 @@ function App() {
   // UI state
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [sortOrder, setSortOrder] = useState('desc')
 
   // Fetch sessions on mount
   useEffect(() => {
@@ -41,6 +42,11 @@ function App() {
     })
   }
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')
+  }
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm)
@@ -52,6 +58,16 @@ function App() {
   const filtered = sessions.filter(s =>
     s.title.toLowerCase().includes(debouncedSearch.toLowerCase())
   )
+  const sorted = [...filtered].sort((a, b) => {
+    const diff = sortOrder === 'desc'
+      ? b.popularity - a.popularity
+      : a.popularity - b.popularity
+    
+    if (diff === 0) {
+      return a.title.localeCompare(b.title)
+    }
+    return diff
+  })
 
 
   return (
@@ -67,19 +83,35 @@ function App() {
           </p>
         </header>
 
-        {/* Search Input */}
+        {/* Controls */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
-            Search Sessions
-          </label>
-          <input
-            id="search"
-            type="search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by title..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-          />
+          <div className="space-y-4">
+            {/* Search Input */}
+            <div>
+              <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+                Search Sessions
+              </label>
+              <input
+                id="search"
+                type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by title..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              />
+            </div>
+
+            {/* Controls Row */}
+            <div className="flex flex-wrap gap-3">
+              {/* Sort Toggle */}
+              <button
+                onClick={toggleSortOrder}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium"
+              >
+                Sort: Popularity {sortOrder === 'desc' ? '↓' : '↑'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Loading State */}
@@ -108,11 +140,11 @@ function App() {
         {!loading && !error && (
           <>
             <div className="mb-4 text-sm text-gray-600">
-              Showing {filtered.length} of {sessions.length} sessions
+              Showing {sorted.length} of {sessions.length} sessions
             </div>
 
             <ul className="space-y-4" role="list">
-              {filtered.map(session => (
+              {sorted.map(session => (
                 <li
                   key={session.id}
                   className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
