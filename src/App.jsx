@@ -11,6 +11,8 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
+  const [simulateError, setSimulateError] = useState(false)
+
 
   // Fetch sessions on mount
   useEffect(() => {
@@ -21,7 +23,28 @@ function App() {
     setLoading(true)
     setError(null)
     try {
-      const data = await fetchSessions(false)
+      const data = await fetchSessions(simulateError)
+      setSessions(data)
+    } catch (err) {
+      console.error('Error fetching sessions:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSimulateErrorChange = async (e) => {
+    const checked = e.target.checked
+    setSimulateError(checked)
+    await loadSessionsWithErrorFlag(checked)
+  }
+
+  // Load sessions with error flag
+  const loadSessionsWithErrorFlag = async (shouldFail) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await fetchSessions(shouldFail)
       setSessions(data)
     } catch (err) {
       console.error('Error fetching sessions:', err)
@@ -110,6 +133,19 @@ function App() {
               >
                 Sort: Popularity {sortOrder === 'desc' ? '↓' : '↑'}
               </button>
+
+              {/* Simulate Error Checkbox */}
+              <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={simulateError}
+                  onChange={handleSimulateErrorChange}
+                  className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-2 focus:ring-red-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Simulate Error
+                </span>
+              </label>
             </div>
           </div>
         </div>
