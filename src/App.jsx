@@ -69,6 +69,20 @@ function App() {
     setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')
   }
 
+  // Highlight matching text in search results
+  const highlightText = (text, highlight) => {
+    if (!highlight.trim()) return text
+    
+    const regex = new RegExp(`(${highlight})`, 'gi')
+    const parts = text.split(regex)
+    
+    return parts.map((part, i) =>
+      regex.test(part)
+        ? <span key={i} className="bg-yellow-200 font-semibold">{part}</span>
+        : part
+    )
+  }
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -187,7 +201,7 @@ function App() {
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-xl font-semibold text-gray-900">
-                      {session.title}
+                      {highlightText(session.title, debouncedSearch)}
                     </h3>
                     <button
                       onClick={() => toggleComplete(session.id)}
