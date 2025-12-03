@@ -26,16 +26,16 @@ function App() {
     }
   }
 
-const toggleComplete = (id) => {
-  setSessions(previousSessions => {
-    return previousSessions.map(session => {
-      if (session.id === id) {
-        return { ...session, completed: !session.completed }
-      }
-      return session
+  const toggleComplete = (id) => {
+    setSessions(previousSessions => {
+      return previousSessions.map(session => {
+        if (session.id === id) {
+          return { ...session, completed: !session.completed }
+        }
+        return session
+      })
     })
-  })
-}
+  }
 
 
   return (
@@ -84,24 +84,24 @@ const toggleComplete = (id) => {
               {sessions.map(session => (
                 <li
                   key={session.id}
-                  className="bg-white rounded-lg shadow-sm p-6"
+                  className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-3">
-  <h3 className="text-xl font-semibold text-gray-900">
-    {session.title}
-  </h3>
-  <button
-    onClick={() => toggleComplete(session.id)}
-    aria-pressed={session.completed}
-    className={`px-3 py-1 rounded-md text-sm font-medium focus:ring-2 focus:ring-offset-2 transition-colors ${
-      session.completed
-        ? 'bg-green-100 text-green-800 hover:bg-green-200 focus:ring-green-500'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500'
-    }`}
-  >
-    {session.completed ? '✓ Completed' : 'Mark Complete'}
-  </button>
-</div>
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {session.title}
+                    </h3>
+                    <button
+                      onClick={() => toggleComplete(session.id)}
+                      aria-pressed={session.completed}
+                      className={`px-3 py-1 rounded-md text-sm font-medium focus:ring-2 focus:ring-offset-2 transition-colors ${
+                        session.completed
+                          ? 'bg-green-100 text-green-800 hover:bg-green-200 focus:ring-green-500'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500'
+                      }`}
+                    >
+                      {session.completed ? '✓ Completed' : 'Mark Complete'}
+                    </button>
+                  </div>
 
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                     {/* Tags */}
@@ -121,7 +121,17 @@ const toggleComplete = (id) => {
                     {/* Difficulty */}
                     <div className="flex items-center gap-1">
                       <span className="font-medium">Difficulty:</span>
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-800">
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                          session.difficulty === 'beginner'
+                            ? 'bg-green-100 text-green-800'
+                            : session.difficulty === 'intermediate'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : session.difficulty === 'advanced'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
                         {session.difficulty}
                       </span>
                     </div>
