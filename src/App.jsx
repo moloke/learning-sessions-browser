@@ -1,30 +1,42 @@
-import { useState, useEffect } from 'react';
-import { fetchSessions } from './api';
+import { useState, useEffect } from 'react'
+import { fetchSessions } from './api'
 
 function App() {
   // Data state
-  const [sessions, setSessions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [sessions, setSessions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   // Fetch sessions on mount
   useEffect(() => {
-    loadSessions();
-  }, []);
+    loadSessions()
+  }, [])
 
   const loadSessions = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
     try {
-      const data = await fetchSessions(false);
-      setSessions(data);
+      const data = await fetchSessions(false)
+      setSessions(data)
     } catch (err) {
-      console.error('Error fetching sessions:', err);
-      setError(err.message);
+      console.error('Error fetching sessions:', err)
+      setError(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+const toggleComplete = (id) => {
+  setSessions(previousSessions => {
+    return previousSessions.map(session => {
+      if (session.id === id) {
+        return { ...session, completed: !session.completed }
+      }
+      return session
+    })
+  })
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,7 +130,7 @@ function App() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
