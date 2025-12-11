@@ -3,7 +3,7 @@ import { fetchSessions } from './api'
 
 function App() {
   // Data state
-  const [sessions, setSessions] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -12,6 +12,8 @@ function App() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [sortOrder, setSortOrder] = useState('desc')
   const [simulateError, setSimulateError] = useState(false)
+
+   
 
 
   // Fetch sessions on mount
@@ -32,6 +34,9 @@ function App() {
       setLoading(false)
     }
   }
+
+    const [sessions, setSessions] = useState(() =>
+  initialSessions.map(session => ({...session, favourited: false})))
 
   const handleSimulateErrorChange = async (e) => {
     const checked = e.target.checked
@@ -65,6 +70,14 @@ function App() {
     })
   }
 
+  const toggleFavourite = (id) => {
+    setSessions(prev =>
+      prev.map(session =>
+        session.id === id ? {...session, favourite: !session.favourited} : session
+      )
+    )
+  }
+
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')
   }
@@ -96,6 +109,14 @@ function App() {
     s.title.toLowerCase().includes(debouncedSearch.toLowerCase())
   )
   const sorted = [...filtered].sort((a, b) => {
+
+    if (a.favourited && !b.favourited) return -1
+    if (!a.favourited && b.favourited) return 1
+
+    const popularityDiff = b.popularity - a.popularity
+    if (popularityDiff !==0) return popularityDiff
+
+
     const diff = sortOrder === 'desc'
       ? b.popularity - a.popularity
       : a.popularity - b.popularity
@@ -214,6 +235,12 @@ function App() {
                     >
                       {session.completed ? '✓ Completed' : 'Mark Complete'}
                     </button>
+
+
+                    <button onClick={() => toggleFavourite(session.id)}> {session.favourited ? " * " : "."}</button>
+
+
+
                   </div>
 
                   <div className="flex flex-wrap gap-4 text-sm text-gray-600">
